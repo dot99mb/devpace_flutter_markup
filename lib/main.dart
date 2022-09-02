@@ -93,27 +93,29 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget getItemsWidgetOnly() {
     return Container(
       margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          crossAxisCount: 2,
-          childAspectRatio: 2,
-        ),
-        itemCount: itemList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            //margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.amber,
-              border: Border.all(width: 1, color: Colors.black),
+      child: itemList.isEmpty
+          ? const SizedBox()
+          : GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                crossAxisCount: 2,
+                childAspectRatio: 2,
+              ),
+              itemCount: itemList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  //margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.amber,
+                    border: Border.all(width: 1, color: Colors.black),
+                  ),
+                  child: Center(child: Text(itemList[index])),
+                );
+              },
             ),
-            child: Center(child: Text(itemList[index])),
-          );
-        },
-      ),
     );
   }
 
