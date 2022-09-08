@@ -56,6 +56,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var myChildSize = Size.zero;
   var myLogoSize = Size.zero;
+  List<String> itemList =
+      List<String>.generate(0, (index) => ('Item # ${(index + 1)}'));
 
   void _addOneItem() {
     itemList.add('Item # ${itemList.length + 1}');
@@ -63,64 +65,50 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getLogoWidget(sizeheight) {
-    //print(myLogoSize);
-    if (myChildSize != Size.zero) {
-      double height = max(sizeheight - myChildSize.height, myLogoSize.height);
-      //print(height);
-      return SizedBox(
-        height: height,
-        child: Container(
-          margin: const EdgeInsets.all(30),
-          child: Center(
-            child: Image.asset(
-              'assets/images/logo.png',
-            ),
-          ),
-        ),
-      );
-    } else {
-      return Container(
-        margin: const EdgeInsets.all(30),
-        child: Center(
-          child: Image.asset(
-            'assets/images/logo.png',
-          ),
-        ),
-      );
-    }
-  }
-
-  Widget getItemsWidgetOnly() {
+    var image = Image.asset(
+      'assets/images/logo.png',
+    );
+    double margin = 30;
     return Container(
-      margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-      child: itemList.isEmpty
-          ? const SizedBox()
-          : GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 2,
-                childAspectRatio: 2,
-              ),
-              itemCount: itemList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  //margin: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    border: Border.all(width: 1, color: Colors.black),
-                  ),
-                  child: Center(child: Text(itemList[index])),
-                );
-              },
-            ),
+      height: myLogoSize == Size.zero
+          ? null
+          : max(sizeheight - margin * 2 - myChildSize.height,
+              myLogoSize.height - margin * 2),
+      margin: EdgeInsets.all(margin),
+      child: Center(
+        child: image,
+      ),
     );
   }
 
-  List<String> itemList =
-      List<String>.generate(0, (index) => ('Item # ${(index + 1)}'));
+  Widget getItemsWidget() {
+    return Container(
+      // decoration: BoxDecoration(border: Border.all()),
+      margin: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          crossAxisCount: 2,
+          childAspectRatio: 2,
+        ),
+        itemCount: itemList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            //margin: const EdgeInsets.all(10),
+
+            decoration: BoxDecoration(
+              color: Colors.amber,
+              border: Border.all(width: 1, color: Colors.black),
+            ),
+            child: Center(child: Text(itemList[index])),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,21 +133,25 @@ class _MyHomePageState extends State<MyHomePage> {
             //LOGO
             MeasureSize(
               onChange: (size) {
-                if (myChildSize == Size.zero) myLogoSize = size;
+                if (myLogoSize == Size.zero) {
+                  setState(() {
+                    myLogoSize = size;
+                  });
+                }
               },
               child: getLogoWidget(sizeheight),
             ),
 
             //Items
-            MeasureSize(
-              onChange: (size) {
-                setState(() {
-                  myChildSize = size;
-                  //print(myChildSize);
-                });
-              },
-              child: getItemsWidgetOnly(),
-            ),
+            if (itemList.isNotEmpty)
+              MeasureSize(
+                onChange: (size) {
+                  setState(() {
+                    myChildSize = size;
+                  });
+                },
+                child: getItemsWidget(),
+              ),
           ],
         ),
       ),
